@@ -1,26 +1,327 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Tailwind v4 Dark Mode Configuration */
+@custom-variant dark (&:where(.dark, .dark *));
 
+/* Theme Configuration */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Vinyl Color Palette */
+  --color-cocoa-brown: #171114;
+  --color-thunder: #382d31;
+  --color-livid-brown: #442131;
+  --color-eggplant: #694257;
+  --color-don-juan: #5e5156;
+  --color-strikemaster: #8b6078;
+  --color-hurricane: #8e8084;
+  --color-bouquet: #b796ae;
+  --color-lily: #c4aeb7;
+  --color-twilight: #e5d2d8;
+
+  /* Semantic Colors */
+  --color-primary: #000000;
+  --color-void: #ffffff;
+  --color-text-mute: #000000;
+  --color-venturing: #8b6078;
+  /* strikemaster */
+
+  /* Fonts */
+  --font-display: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  /* Border Radius */
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+
+  /* Shadows - using strikemaster for glow */
+  --shadow-venturing-glow: 0 0 80px 30px rgba(139, 96, 120, 0.4);
+
+  /* Animations */
+  --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================
+   LENIS SMOOTH SCROLL
+   ========================================= */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* =========================================
+   BASE STYLES
+   ========================================= */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-display);
+  background-color: #ffffff;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hide default cursor on desktop for custom cursor */
+@media (hover: hover) and (pointer: fine) {
+
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
+
+/* Dark Mode Body */
+.dark body {
+  background-color: #0a0a0a;
+  color: #ffffff;
+}
+
+/* Selection Styles */
+::selection {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark ::selection {
+  background-color: #ffffff;
+  color: #0a0a0a;
+}
+
+
+
+/* Custom Utilities */
+@utility venturing-glow-bg {
+  background: radial-gradient(circle at center,
+      rgba(201, 128, 176, 0.25) 0%,
+      rgba(255, 255, 255, 0) 70%);
+}
+
+/* =========================================
+   STACKED CARDS EFFECT
+   ========================================= */
+
+/* Container for stacked cards */
+.stacked-cards-container {
+  display: grid;
+  grid-gap: 20px;
+}
+
+/* Outer card - handles sticky positioning and z-index */
+.stacked-card {
+  position: sticky;
+  top: 48px;
+}
+
+/* Inner card - handles the visual appearance and animation */
+.stacked-card-inner {
+  background-color: #ffffff;
+  transform-origin: center top;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.dark .stacked-card-inner {
+  background-color: #18181b;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Cards that are NOT the last one get the scroll animation */
+.stacked-card.has-animation .stacked-card-inner {
+  view-timeline-name: --card;
+  view-timeline-axis: block;
+  animation-timeline: --card;
+  animation-name: stack-scale-out;
+  animation-range: entry 100% cover 40%;
+  animation-fill-mode: both;
+}
+
+/* Scale down animation as card scrolls out */
+@keyframes stack-scale-out {
+
+  0%,
+  50% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  100% {
+    transform: scale(0.95);
+    filter: brightness(0.85);
+  }
+}
+
+/* =========================================
+   MICRO-INTERACTIONS
+   ========================================= */
+
+/* Smooth focus states */
+*:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Button press effect */
+button:active,
+a:active {
+  transform: scale(0.98);
+}
+
+/* Link underline animation */
+.animated-underline {
+  position: relative;
+}
+
+.animated-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.3s ease-out;
+}
+
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+/* =========================================
+   SKILLS MARQUEE
+   ========================================= */
+
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* =========================================
+   VIEWPORT BORDER GLOW
+   ========================================= */
+
+.viewport-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: inset 0 0 100px 20px rgba(201, 128, 176, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .viewport-glow {
+  box-shadow: inset 0 0 120px 30px rgba(201, 128, 176, 0.2);
+}
+
+/* Alternative cool blue glow like reference site */
+.viewport-glow-blue {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: inset 0 0 100px 30px rgba(59, 130, 246, 0.1);
+}
+
+.dark .viewport-glow-blue {
+  box-shadow: inset 0 0 150px 40px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================================
+   FILM GRAIN OVERLAY
+   ========================================= */
+
+.film-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  /* Static grain - no jittering animation */
+}
+
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -10%);
+  }
+
+  20% {
+    transform: translate(-15%, 5%);
+  }
+
+  30% {
+    transform: translate(7%, -25%);
+  }
+
+  40% {
+    transform: translate(-5%, 25%);
+  }
+
+  50% {
+    transform: translate(-15%, 10%);
+  }
+
+  60% {
+    transform: translate(15%, 0%);
+  }
+
+  70% {
+    transform: translate(0%, 15%);
+  }
+
+  80% {
+    transform: translate(3%, 35%);
+  }
+
+  90% {
+    transform: translate(-10%, 10%);
+  }
 }
